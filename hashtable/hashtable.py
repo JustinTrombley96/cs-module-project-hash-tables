@@ -22,6 +22,9 @@ class HashTable:
 
     def __init__(self, capacity):
         # Your code here
+        self.capacity = capacity
+        self.storage = [None] * capacity
+        
 
 
     def get_num_slots(self):
@@ -35,6 +38,11 @@ class HashTable:
         Implement this.
         """
         # Your code here
+
+        # return len(self.capacity)
+
+
+
 
 
     def get_load_factor(self):
@@ -55,6 +63,16 @@ class HashTable:
 
         # Your code here
 
+        # FNV_prime = 1099511628211
+        # FNV_offset_basis = 14695981039346656037
+
+        # hash_index = FNV_offset_basis
+        # bytes_to_hash = key.encode()
+        # for byte in bytes_to_hash:
+        #     hash_index = hash_index * FNV_prime
+        #     hash_index = hash_index ^ byte
+        # return hash_index
+
 
     def djb2(self, key):
         """
@@ -63,6 +81,12 @@ class HashTable:
         Implement this, and/or FNV-1.
         """
         # Your code here
+        hash = 5381
+        for x in key:
+            hash = (( hash << 5) + hash) + ord(x)
+        return hash & 0xFFFFFFFF
+
+        
 
 
     def hash_index(self, key):
@@ -70,7 +94,7 @@ class HashTable:
         Take an arbitrary key and return a valid integer index
         between within the storage capacity of the hash table.
         """
-        #return self.fnv1(key) % self.capacity
+        # return self.fnv1(key) % self.capacity
         return self.djb2(key) % self.capacity
 
     def put(self, key, value):
@@ -82,6 +106,20 @@ class HashTable:
         Implement this.
         """
         # Your code here
+        index = self.hash_index(key)
+        if self.storage[index] is not None:
+            for keyVP in self.capacity[index]:
+                if keyVP[0] == key:
+                    keyVP[1] = value
+                    break
+            else:
+                self.storage[index].append([key, value])
+        else:
+            self.storage[index] = []
+            self.storage[index].append([key, value])
+        
+
+
 
 
     def delete(self, key):
@@ -93,6 +131,10 @@ class HashTable:
         Implement this.
         """
         # Your code here
+        if key is True:
+            put(key, None)
+        else:
+            print("Warning this key does not exist")
 
 
     def get(self, key):
@@ -104,6 +146,16 @@ class HashTable:
         Implement this.
         """
         # Your code here
+        index = self.hash_index(key)
+        if self.storage[index] is None:
+            return None
+        else:
+            for keyVP in self.storage[index]:
+                if keyVP[0] == key:
+                    return keyVP[1]
+
+        
+
 
 
     def resize(self, new_capacity):
