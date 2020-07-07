@@ -39,7 +39,7 @@ class HashTable:
         """
         # Your code here
 
-        # return len(self.capacity)
+        return len(self.capacity)
 
 
 
@@ -63,15 +63,15 @@ class HashTable:
 
         # Your code here
 
-        # FNV_prime = 1099511628211
-        # FNV_offset_basis = 14695981039346656037
+        FNV_prime = 1099511628211
+        FNV_offset_basis = 14695981039346656037
 
-        # hash_index = FNV_offset_basis
-        # bytes_to_hash = key.encode()
-        # for byte in bytes_to_hash:
-        #     hash_index = hash_index * FNV_prime
-        #     hash_index = hash_index ^ byte
-        # return hash_index
+        hash_index = FNV_offset_basis
+        bytes_to_hash = key.encode()
+        for byte in bytes_to_hash:
+            hash_index = hash_index * FNV_prime
+            hash_index = hash_index ^ byte
+        return hash_index
 
 
     def djb2(self, key):
@@ -135,6 +135,9 @@ class HashTable:
             put(key, None)
         else:
             print("Warning this key does not exist")
+        
+        i = self.hash_index(key)
+        self.storage[i] = None
 
 
     def get(self, key):
