@@ -1,3 +1,49 @@
+class DoublyLinkedList:
+    def __init__(self, node=None):
+        self.head = node
+        self.tail = node
+        self.length = 1 if node is not None else 0
+
+
+    def __len__(self):
+        return self.length
+
+
+    def add_to_list(self, key, value):
+        new_entry = HashTableEntry(key, value)
+        self.length += 1
+        if not self.head and not self.tail:
+            self.head = new_entry
+            self.tail = new_entry
+        else:
+            new_entry.prev = self.tail
+            self.tail.next = new_entry
+            self.tail = new_entry
+
+
+    def find_node(self, key):
+        cur = self.head
+        while cur is not None:
+            if cur.key == key:
+                return cur
+            cur = cur.next
+        return None
+
+        
+    def delete(self, node):
+        self.length -= 1
+        if self.head is self.tail:
+            self.head = None
+            self.tail = None
+        elif node is self.head:
+            self.head = self.head.next
+            node.delete()
+        elif node is self.tail:
+            self.tail = self.tail.prev
+            node.delete()
+        else:
+            node.delete()
+
 class HashTableEntry:
     """
     Linked List hash table key/value pair
@@ -6,6 +52,12 @@ class HashTableEntry:
         self.key = key
         self.value = value
         self.next = None
+        self.prev = None
+    def delete(self):
+        if self.prev:
+            self.prev.next = self.next
+        if self.next:
+            self.next.prev = self.prev
 
 
 # Hash table can't have fewer than this many slots
@@ -106,17 +158,24 @@ class HashTable:
         Implement this.
         """
         # Your code here
+        # If self.capacity[index] is none, then initiate None before adding to the list.
+        # self.capacity[index] = doubly linked list
+        # Then add a key and a value to the doubly linked list
+    
         index = self.hash_index(key)
-        if self.storage[index] is not None:
-            for keyVP in self.storage[index]:
-                if keyVP[0] == key:
-                    keyVP[1] = value
-                    break
-            else:
-                self.storage[index].append([key, value])
+        if self.storage[index] is None:
+        # Initiate none by setting self.capacity[index] = doubly linked list
+            self.storage[index] = DoublyLinkedList()
+            self.storage[index].add_to_list(key, value)
         else:
-            self.storage[index] = []
-            self.storage[index].append([key, value])
+            found = self.storage[index].find_node(key)
+            if found:
+                found.value = value
+            else:
+                self.storage[index].add_to_list(key, value)
+
+        
+        
         
 
 
@@ -131,13 +190,12 @@ class HashTable:
         Implement this.
         """
         # Your code here
-        if key is True:
-            put(key, None)
+        index = self.hash_index(key)
+        found = self.storage[index].find_node(key)
+        if found is None:
+            print("Warning, this key is not found.")
         else:
-            print("Warning this key does not exist")
-        
-        i = self.hash_index(key)
-        self.storage[i] = None
+            self.storage[index].delete(found)
 
 
     def get(self, key):
@@ -153,10 +211,11 @@ class HashTable:
         if self.storage[index] is None:
             return None
         else:
-            for keyVP in self.storage[index]:
-                if keyVP[0] == key:
-                    return keyVP[1]
-
+            found = self.storage[index].find_node(key)
+            if found is None:
+                return None
+            else:
+                return found.value
         
 
 
