@@ -84,7 +84,7 @@ class HashTable:
         hash = 5381
         for x in key:
             hash = (( hash << 5) + hash) + ord(x)
-        return hash & 0xFFFFFFFF
+        return hash
 
         
 
@@ -108,7 +108,7 @@ class HashTable:
         # Your code here
         index = self.hash_index(key)
         if self.storage[index] is not None:
-            for keyVP in self.capacity[index]:
+            for keyVP in self.storage[index]:
                 if keyVP[0] == key:
                     keyVP[1] = value
                     break
