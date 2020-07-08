@@ -53,6 +53,7 @@ class HashTableEntry:
         self.value = value
         self.next = None
         self.prev = None
+
     def delete(self):
         if self.prev:
             self.prev.next = self.next
@@ -76,6 +77,7 @@ class HashTable:
         # Your code here
         self.capacity = capacity
         self.storage = [None] * capacity
+        self.items = 0
         
 
 
@@ -91,7 +93,7 @@ class HashTable:
         """
         # Your code here
 
-        return len(self.capacity)
+        return len(self.storage)
 
 
 
@@ -167,12 +169,16 @@ class HashTable:
         # Initiate none by setting self.capacity[index] = doubly linked list
             self.storage[index] = DoublyLinkedList()
             self.storage[index].add_to_list(key, value)
+            self.items += 1
         else:
             found = self.storage[index].find_node(key)
             if found:
                 found.value = value
             else:
                 self.storage[index].add_to_list(key, value)
+                self.items += 1
+        if (self.items / self.capacity) > .7:
+            self.resize(self.capacity * 2)
 
         
         
@@ -196,6 +202,7 @@ class HashTable:
             print("Warning, this key is not found.")
         else:
             self.storage[index].delete(found)
+            self.items -= 1
 
 
     def get(self, key):
@@ -228,6 +235,25 @@ class HashTable:
         Implement this.
         """
         # Your code here
+        # Copy the current storage
+        # Reset the hashtable to initial values with the new capacity
+        # Iterate through the old storage and add to the changed hashtable
+        old_storage = self.storage
+        self.storage = [None] * new_capacity
+        self.items = 0
+        self.capacity = new_capacity
+        for dll in old_storage:
+            if dll is not None:
+                current_node = dll.head
+                while current_node is not None:
+                    key,value = current_node.key,current_node.value
+                    self.put(key, value)
+                    current_node = current_node.next
+
+
+        
+
+
 
 
 
