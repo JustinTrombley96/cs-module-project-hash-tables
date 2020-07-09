@@ -1,5 +1,19 @@
 def no_dups(s):
     # Your code here
+    words = {}
+    result = ''
+    string = s.split()
+    for word in string:
+        # print(string)
+        if word not in words:
+            words[word] = None
+            result +=  word + ' ' 
+            
+        # print('This is the result: ', result)
+    return result.strip()
+
+            
+
 
 
 
